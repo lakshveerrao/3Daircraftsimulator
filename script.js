@@ -1,4 +1,4 @@
-// 3D Flight Simulator Pro - Real Aircraft Simulator
+// 3D Aircraft Simulator Pro - Mobile Style
 class FlightSimulatorPro {
     constructor() {
         this.scene = null;
@@ -9,6 +9,8 @@ class FlightSimulatorPro {
         this.clouds = [];
         this.buildings = [];
         this.airports = [];
+        this.trees = [];
+        this.runways = [];
         
         // Aircraft types and specifications
         this.aircraftTypes = {
@@ -91,12 +93,15 @@ class FlightSimulatorPro {
             timeOfDay: 'day'
         };
         
-        // Camera modes
+        // Enhanced Camera modes
         this.cameraModes = {
             COCKPIT: 'cockpit',
             EXTERNAL: 'external',
             TOWER: 'tower',
-            CHASE: 'chase'
+            CHASE: 'chase',
+            DOOR: 'door',
+            DOWN: 'down',
+            FRONT: 'front'
         };
         this.currentCameraMode = this.cameraModes.COCKPIT;
         
@@ -110,6 +115,12 @@ class FlightSimulatorPro {
         this.frameCount = 0;
         this.lastTime = 0;
         this.fps = 60;
+        
+        // Mobile controls
+        this.touchControls = {
+            joystick: { x: 0, y: 0 },
+            throttle: 0
+        };
         
         this.init();
         this.setupEventListeners();
@@ -202,24 +213,42 @@ class FlightSimulatorPro {
     }
 
     async createEnvironment() {
-        // Create terrain
-        this.createTerrain();
+        // Create enhanced terrain with realistic features
+        this.createEnhancedTerrain();
 
-        // Create sky
-        this.createSky();
+        // Create dynamic sky
+        this.createDynamicSky();
 
-        // Create clouds
-        this.createClouds();
+        // Create realistic clouds
+        this.createRealisticClouds();
 
-        // Create buildings and cities
-        this.createBuildings();
+        // Create detailed buildings and cities
+        this.createDetailedBuildings();
 
-        // Create airports
-        this.createAirports();
+        // Create realistic airports with runways
+        this.createRealisticAirports();
+
+        // Create trees and vegetation
+        this.createTrees();
+
+        // Create water bodies
+        this.createWaterBodies();
     }
 
-    createTerrain() {
-        const terrainGeometry = new THREE.PlaneGeometry(100000, 100000, 200, 200);
+    createEnhancedTerrain() {
+        // Create detailed terrain with heightmap
+        const terrainGeometry = new THREE.PlaneGeometry(150000, 150000, 300, 300);
+        
+        // Create heightmap for realistic terrain
+        const vertices = terrainGeometry.attributes.position.array;
+        for (let i = 0; i < vertices.length; i += 3) {
+            const x = vertices[i];
+            const z = vertices[i + 2];
+            vertices[i + 1] = Math.sin(x * 0.001) * 100 + Math.cos(z * 0.001) * 100;
+        }
+        terrainGeometry.attributes.position.needsUpdate = true;
+        terrainGeometry.computeVertexNormals();
+        
         const terrainMaterial = new THREE.MeshLambertMaterial({ 
             color: 0x228B22,
             side: THREE.DoubleSide 
@@ -231,51 +260,73 @@ class FlightSimulatorPro {
         this.terrain.receiveShadow = true;
         this.scene.add(this.terrain);
 
-        // Add mountains
-        for (let i = 0; i < 30; i++) {
-            const mountainGeometry = new THREE.ConeGeometry(
-                Math.random() * 800 + 300,
-                Math.random() * 1500 + 800,
-                12
-            );
-            const mountainMaterial = new THREE.MeshLambertMaterial({ color: 0x8B4513 });
+        // Add realistic mountains with different types
+        for (let i = 0; i < 50; i++) {
+            const mountainType = Math.random();
+            let mountainGeometry;
+            
+            if (mountainType < 0.3) {
+                // Sharp peaks
+                mountainGeometry = new THREE.ConeGeometry(
+                    Math.random() * 1000 + 400,
+                    Math.random() * 2000 + 1000,
+                    8
+                );
+            } else if (mountainType < 0.6) {
+                // Rounded mountains
+                mountainGeometry = new THREE.SphereGeometry(
+                    Math.random() * 800 + 300,
+                    8, 6
+                );
+            } else {
+                // Plateaus
+                mountainGeometry = new THREE.CylinderGeometry(
+                    Math.random() * 600 + 200,
+                    Math.random() * 600 + 200,
+                    Math.random() * 800 + 400,
+                    8
+                );
+            }
+            
+            const mountainMaterial = new THREE.MeshLambertMaterial({ 
+                color: new THREE.Color().setHSL(0.1, 0.6, 0.3 + Math.random() * 0.2)
+            });
             const mountain = new THREE.Mesh(mountainGeometry, mountainMaterial);
             
             mountain.position.set(
-                (Math.random() - 0.5) * 80000,
-                Math.random() * 800 + 400,
-                (Math.random() - 0.5) * 80000
+                (Math.random() - 0.5) * 120000,
+                Math.random() * 1000 + 500,
+                (Math.random() - 0.5) * 120000
             );
             mountain.castShadow = true;
             mountain.receiveShadow = true;
             this.scene.add(mountain);
         }
 
-        // Add water bodies
-        for (let i = 0; i < 5; i++) {
-            const waterGeometry = new THREE.CircleGeometry(
-                Math.random() * 2000 + 1000,
-                32
+        // Add hills and valleys
+        for (let i = 0; i < 100; i++) {
+            const hillGeometry = new THREE.SphereGeometry(
+                Math.random() * 300 + 100,
+                6, 4
             );
-            const waterMaterial = new THREE.MeshLambertMaterial({ 
-                color: 0x006994,
-                transparent: true,
-                opacity: 0.8
+            const hillMaterial = new THREE.MeshLambertMaterial({ 
+                color: new THREE.Color().setHSL(0.2, 0.5, 0.4 + Math.random() * 0.3)
             });
-            const water = new THREE.Mesh(waterGeometry, waterMaterial);
+            const hill = new THREE.Mesh(hillGeometry, hillMaterial);
             
-            water.rotation.x = -Math.PI / 2;
-            water.position.set(
-                (Math.random() - 0.5) * 60000,
-                -95,
-                (Math.random() - 0.5) * 60000
+            hill.position.set(
+                (Math.random() - 0.5) * 100000,
+                Math.random() * 200 + 50,
+                (Math.random() - 0.5) * 100000
             );
-            this.scene.add(water);
+            hill.castShadow = true;
+            hill.receiveShadow = true;
+            this.scene.add(hill);
         }
     }
 
-    createSky() {
-        const skyGeometry = new THREE.SphereGeometry(40000, 64, 64);
+    createDynamicSky() {
+        const skyGeometry = new THREE.SphereGeometry(50000, 64, 64);
         const skyMaterial = new THREE.MeshBasicMaterial({
             color: 0x87CEEB,
             side: THREE.BackSide
@@ -284,35 +335,36 @@ class FlightSimulatorPro {
         this.scene.add(sky);
     }
 
-    createClouds() {
-        for (let i = 0; i < 100; i++) {
+    createRealisticClouds() {
+        for (let i = 0; i < 150; i++) {
             const cloudGroup = new THREE.Group();
             
-            for (let j = 0; j < 8; j++) {
+            // Create more complex cloud shapes
+            for (let j = 0; j < 12; j++) {
                 const cloudGeometry = new THREE.SphereGeometry(
-                    Math.random() * 150 + 80,
-                    12,
-                    8
+                    Math.random() * 200 + 100,
+                    16,
+                    12
                 );
                 const cloudMaterial = new THREE.MeshLambertMaterial({ 
                     color: 0xffffff,
                     transparent: true,
-                    opacity: 0.9
+                    opacity: 0.8 + Math.random() * 0.2
                 });
                 const cloud = new THREE.Mesh(cloudGeometry, cloudMaterial);
                 
                 cloud.position.set(
-                    (Math.random() - 0.5) * 300,
-                    (Math.random() - 0.5) * 80,
-                    (Math.random() - 0.5) * 300
+                    (Math.random() - 0.5) * 400,
+                    (Math.random() - 0.5) * 100,
+                    (Math.random() - 0.5) * 400
                 );
                 cloudGroup.add(cloud);
             }
             
             cloudGroup.position.set(
-                (Math.random() - 0.5) * 80000,
-                Math.random() * 4000 + 1500,
-                (Math.random() - 0.5) * 80000
+                (Math.random() - 0.5) * 100000,
+                Math.random() * 5000 + 2000,
+                (Math.random() - 0.5) * 100000
             );
             
             this.clouds.push(cloudGroup);
@@ -320,23 +372,44 @@ class FlightSimulatorPro {
         }
     }
 
-    createBuildings() {
-        // Create city buildings
-        for (let i = 0; i < 50; i++) {
-            const buildingGeometry = new THREE.BoxGeometry(
-                Math.random() * 50 + 20,
-                Math.random() * 200 + 50,
-                Math.random() * 50 + 20
-            );
+    createDetailedBuildings() {
+        // Create city buildings with more variety
+        for (let i = 0; i < 100; i++) {
+            const buildingType = Math.random();
+            let buildingGeometry;
+            
+            if (buildingType < 0.3) {
+                // Skyscrapers
+                buildingGeometry = new THREE.BoxGeometry(
+                    Math.random() * 40 + 30,
+                    Math.random() * 300 + 150,
+                    Math.random() * 40 + 30
+                );
+            } else if (buildingType < 0.6) {
+                // Office buildings
+                buildingGeometry = new THREE.BoxGeometry(
+                    Math.random() * 60 + 40,
+                    Math.random() * 150 + 80,
+                    Math.random() * 60 + 40
+                );
+            } else {
+                // Residential buildings
+                buildingGeometry = new THREE.BoxGeometry(
+                    Math.random() * 30 + 20,
+                    Math.random() * 100 + 50,
+                    Math.random() * 30 + 20
+                );
+            }
+            
             const buildingMaterial = new THREE.MeshLambertMaterial({ 
-                color: new THREE.Color().setHSL(0, 0, Math.random() * 0.3 + 0.3)
+                color: new THREE.Color().setHSL(0, 0, Math.random() * 0.4 + 0.2)
             });
             const building = new THREE.Mesh(buildingGeometry, buildingMaterial);
             
             building.position.set(
-                (Math.random() - 0.5) * 60000,
-                Math.random() * 100 + 25,
-                (Math.random() - 0.5) * 60000
+                (Math.random() - 0.5) * 80000,
+                Math.random() * 150 + 25,
+                (Math.random() - 0.5) * 80000
             );
             building.castShadow = true;
             building.receiveShadow = true;
@@ -345,31 +418,148 @@ class FlightSimulatorPro {
         }
     }
 
-    createAirports() {
-        // Create runway
-        const runwayGeometry = new THREE.PlaneGeometry(3000, 50);
-        const runwayMaterial = new THREE.MeshLambertMaterial({ color: 0x333333 });
-        const runway = new THREE.Mesh(runwayGeometry, runwayMaterial);
-        runway.rotation.x = -Math.PI / 2;
-        runway.position.set(0, -95, 0);
-        runway.receiveShadow = true;
-        this.scene.add(runway);
+    createRealisticAirports() {
+        // Create multiple airports with detailed runways
+        for (let airport = 0; airport < 3; airport++) {
+            const airportX = (Math.random() - 0.5) * 100000;
+            const airportZ = (Math.random() - 0.5) * 100000;
+            
+            // Create main runway
+            const runwayGeometry = new THREE.PlaneGeometry(4000, 60);
+            const runwayMaterial = new THREE.MeshLambertMaterial({ color: 0x333333 });
+            const runway = new THREE.Mesh(runwayGeometry, runwayMaterial);
+            runway.rotation.x = -Math.PI / 2;
+            runway.position.set(airportX, -95, airportZ);
+            runway.receiveShadow = true;
+            this.scene.add(runway);
+            this.runways.push(runway);
 
-        // Create control tower
-        const towerGeometry = new THREE.CylinderGeometry(10, 15, 60, 8);
-        const towerMaterial = new THREE.MeshLambertMaterial({ color: 0x666666 });
-        const tower = new THREE.Mesh(towerGeometry, towerMaterial);
-        tower.position.set(0, -70, 0);
-        tower.castShadow = true;
-        this.scene.add(tower);
+            // Create runway markings
+            for (let i = 0; i < 20; i++) {
+                const markingGeometry = new THREE.PlaneGeometry(2, 30);
+                const markingMaterial = new THREE.MeshLambertMaterial({ color: 0xffffff });
+                const marking = new THREE.Mesh(markingGeometry, markingMaterial);
+                marking.rotation.x = -Math.PI / 2;
+                marking.position.set(
+                    airportX + (i - 10) * 200,
+                    -94,
+                    airportZ
+                );
+                this.scene.add(marking);
+            }
 
-        // Create hangar
-        const hangarGeometry = new THREE.BoxGeometry(100, 30, 60);
-        const hangarMaterial = new THREE.MeshLambertMaterial({ color: 0x888888 });
-        const hangar = new THREE.Mesh(hangarGeometry, hangarMaterial);
-        hangar.position.set(200, -85, 0);
-        hangar.castShadow = true;
-        this.scene.add(hangar);
+            // Create control tower
+            const towerGeometry = new THREE.CylinderGeometry(8, 12, 50, 8);
+            const towerMaterial = new THREE.MeshLambertMaterial({ color: 0x666666 });
+            const tower = new THREE.Mesh(towerGeometry, towerMaterial);
+            tower.position.set(airportX + 100, -70, airportZ);
+            tower.castShadow = true;
+            this.scene.add(tower);
+
+            // Create hangar
+            const hangarGeometry = new THREE.BoxGeometry(80, 25, 50);
+            const hangarMaterial = new THREE.MeshLambertMaterial({ color: 0x888888 });
+            const hangar = new THREE.Mesh(hangarGeometry, hangarMaterial);
+            hangar.position.set(airportX + 200, -87, airportZ);
+            hangar.castShadow = true;
+            this.scene.add(hangar);
+
+            // Create terminal building
+            const terminalGeometry = new THREE.BoxGeometry(120, 20, 40);
+            const terminalMaterial = new THREE.MeshLambertMaterial({ color: 0xaaaaaa });
+            const terminal = new THREE.Mesh(terminalGeometry, terminalMaterial);
+            terminal.position.set(airportX - 150, -90, airportZ);
+            terminal.castShadow = true;
+            this.scene.add(terminal);
+        }
+    }
+
+    createTrees() {
+        // Create realistic trees with different types
+        for (let i = 0; i < 500; i++) {
+            const treeType = Math.random();
+            let treeGroup = new THREE.Group();
+            
+            if (treeType < 0.4) {
+                // Pine trees
+                const trunkGeometry = new THREE.CylinderGeometry(2, 3, 20, 8);
+                const trunkMaterial = new THREE.MeshLambertMaterial({ color: 0x8B4513 });
+                const trunk = new THREE.Mesh(trunkGeometry, trunkMaterial);
+                trunk.position.y = 10;
+                treeGroup.add(trunk);
+                
+                const leavesGeometry = new THREE.ConeGeometry(8, 25, 8);
+                const leavesMaterial = new THREE.MeshLambertMaterial({ color: 0x228B22 });
+                const leaves = new THREE.Mesh(leavesGeometry, leavesMaterial);
+                leaves.position.y = 25;
+                treeGroup.add(leaves);
+                
+            } else if (treeType < 0.7) {
+                // Oak trees
+                const trunkGeometry = new THREE.CylinderGeometry(3, 4, 15, 8);
+                const trunkMaterial = new THREE.MeshLambertMaterial({ color: 0x8B4513 });
+                const trunk = new THREE.Mesh(trunkGeometry, trunkMaterial);
+                trunk.position.y = 7.5;
+                treeGroup.add(trunk);
+                
+                const leavesGeometry = new THREE.SphereGeometry(12, 8, 6);
+                const leavesMaterial = new THREE.MeshLambertMaterial({ color: 0x32CD32 });
+                const leaves = new THREE.Mesh(leavesGeometry, leavesMaterial);
+                leaves.position.y = 20;
+                treeGroup.add(leaves);
+                
+            } else {
+                // Palm trees
+                const trunkGeometry = new THREE.CylinderGeometry(1, 1, 25, 8);
+                const trunkMaterial = new THREE.MeshLambertMaterial({ color: 0x8B4513 });
+                const trunk = new THREE.Mesh(trunkGeometry, trunkMaterial);
+                trunk.position.y = 12.5;
+                treeGroup.add(trunk);
+                
+                for (let j = 0; j < 8; j++) {
+                    const leafGeometry = new THREE.BoxGeometry(1, 15, 0.5);
+                    const leafMaterial = new THREE.MeshLambertMaterial({ color: 0x228B22 });
+                    const leaf = new THREE.Mesh(leafGeometry, leafMaterial);
+                    leaf.position.y = 25;
+                    leaf.rotation.y = (j * Math.PI) / 4;
+                    treeGroup.add(leaf);
+                }
+            }
+            
+            treeGroup.position.set(
+                (Math.random() - 0.5) * 120000,
+                -100,
+                (Math.random() - 0.5) * 120000
+            );
+            treeGroup.castShadow = true;
+            treeGroup.receiveShadow = true;
+            this.trees.push(treeGroup);
+            this.scene.add(treeGroup);
+        }
+    }
+
+    createWaterBodies() {
+        // Create lakes and rivers
+        for (let i = 0; i < 8; i++) {
+            const waterGeometry = new THREE.CircleGeometry(
+                Math.random() * 3000 + 1500,
+                32
+            );
+            const waterMaterial = new THREE.MeshLambertMaterial({ 
+                color: 0x006994,
+                transparent: true,
+                opacity: 0.7
+            });
+            const water = new THREE.Mesh(waterGeometry, waterMaterial);
+            
+            water.rotation.x = -Math.PI / 2;
+            water.position.set(
+                (Math.random() - 0.5) * 100000,
+                -95,
+                (Math.random() - 0.5) * 100000
+            );
+            this.scene.add(water);
+        }
     }
 
     createAircraft() {
@@ -684,6 +874,19 @@ class FlightSimulatorPro {
             }
         });
 
+        // Engine toggle
+        document.getElementById('engineToggle').addEventListener('click', () => {
+            this.systems.engineRunning = !this.systems.engineRunning;
+            const btn = document.getElementById('engineToggle');
+            if (this.systems.engineRunning) {
+                btn.innerHTML = '<i class="fas fa-power-off"></i> STOP ENGINE';
+                btn.classList.add('active');
+            } else {
+                btn.innerHTML = '<i class="fas fa-power-off"></i> START ENGINE';
+                btn.classList.remove('active');
+            }
+        });
+
         // Weather control
         document.getElementById('weatherSelect').addEventListener('change', (e) => {
             this.systems.weather = e.target.value;
@@ -712,6 +915,18 @@ class FlightSimulatorPro {
         document.getElementById('chaseView').addEventListener('click', () => {
             this.setCameraMode(this.cameraModes.CHASE);
         });
+
+        document.getElementById('doorView').addEventListener('click', () => {
+            this.setCameraMode(this.cameraModes.DOOR);
+        });
+
+        document.getElementById('downView').addEventListener('click', () => {
+            this.setCameraMode(this.cameraModes.DOWN);
+        });
+
+        document.getElementById('frontView').addEventListener('click', () => {
+            this.setCameraMode(this.cameraModes.FRONT);
+        });
     }
 
     setCameraMode(mode) {
@@ -734,6 +949,15 @@ class FlightSimulatorPro {
                 break;
             case this.cameraModes.CHASE:
                 document.getElementById('chaseView').classList.add('active');
+                break;
+            case this.cameraModes.DOOR:
+                document.getElementById('doorView').classList.add('active');
+                break;
+            case this.cameraModes.DOWN:
+                document.getElementById('downView').classList.add('active');
+                break;
+            case this.cameraModes.FRONT:
+                document.getElementById('frontView').classList.add('active');
                 break;
         }
     }
@@ -1073,6 +1297,31 @@ class FlightSimulatorPro {
                 chaseOffset.applyQuaternion(this.plane.quaternion);
                 this.camera.position.copy(this.plane.position).add(chaseOffset);
                 this.camera.lookAt(this.plane.position);
+                break;
+                
+            case this.cameraModes.DOOR:
+                // Door view - from passenger door
+                const doorOffset = new THREE.Vector3(15, 5, 0);
+                doorOffset.applyQuaternion(this.plane.quaternion);
+                this.camera.position.copy(this.plane.position).add(doorOffset);
+                this.camera.lookAt(this.plane.position);
+                break;
+                
+            case this.cameraModes.DOWN:
+                // Down view - looking straight down
+                const downOffset = new THREE.Vector3(0, 100, 0);
+                this.camera.position.copy(this.plane.position).add(downOffset);
+                this.camera.lookAt(this.plane.position);
+                break;
+                
+            case this.cameraModes.FRONT:
+                // Front view - looking ahead from nose
+                const frontOffset = new THREE.Vector3(-20, 0, 0);
+                frontOffset.applyQuaternion(this.plane.quaternion);
+                this.camera.position.copy(this.plane.position).add(frontOffset);
+                this.camera.lookAt(this.plane.position.clone().add(
+                    new THREE.Vector3(-50, 0, 0).applyQuaternion(this.plane.quaternion)
+                ));
                 break;
         }
     }
