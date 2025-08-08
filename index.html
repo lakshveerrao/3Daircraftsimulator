@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Plane Simulator</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="container">
+        <div id="info">
+            <h1>3D Plane Simulator</h1>
+            <div id="controls">
+                <div class="control-group">
+                    <label>Speed: <span id="speed">0</span> km/h</label>
+                    <input type="range" id="speedSlider" min="0" max="800" value="0">
+                </div>
+                <div class="control-group">
+                    <label>Altitude: <span id="altitude">0</span> m</label>
+                    <input type="range" id="altitudeSlider" min="0" max="10000" value="0">
+                </div>
+                <div class="control-group">
+                    <label>Pitch: <span id="pitch">0</span>°</label>
+                    <input type="range" id="pitchSlider" min="-45" max="45" value="0">
+                </div>
+                <div class="control-group">
+                    <label>Roll: <span id="roll">0</span>°</label>
+                    <input type="range" id="rollSlider" min="-45" max="45" value="0">
+                </div>
+                <div class="control-group">
+                    <label>Yaw: <span id="yaw">0</span>°</label>
+                    <input type="range" id="yawSlider" min="-180" max="180" value="0">
+                </div>
+            </div>
+            <div id="instructions">
+                <h3>Controls:</h3>
+                <p>WASD - Move camera</p>
+                <p>Mouse - Look around</p>
+                <p>Space - Toggle auto-pilot</p>
+                <p>R - Reset position</p>
+            </div>
+        </div>
+        <div id="scene-container"></div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,130 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    overflow: hidden;
+}
+
+#container {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+}
+
+#info {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    z-index: 100;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 20px;
+    border-radius: 10px;
+    backdrop-filter: blur(10px);
+    max-width: 300px;
+}
+
+#info h1 {
+    margin-bottom: 20px;
+    font-size: 24px;
+    text-align: center;
+    color: #fff;
+}
+
+#controls {
+    margin-bottom: 20px;
+}
+
+.control-group {
+    margin-bottom: 15px;
+}
+
+.control-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 14px;
+    color: #ddd;
+}
+
+.control-group input[type="range"] {
+    width: 100%;
+    height: 6px;
+    border-radius: 3px;
+    background: #444;
+    outline: none;
+    -webkit-appearance: none;
+}
+
+.control-group input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #667eea;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.control-group input[type="range"]::-webkit-slider-thumb:hover {
+    background: #764ba2;
+}
+
+.control-group input[type="range"]::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #667eea;
+    cursor: pointer;
+    border: none;
+}
+
+#instructions {
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    padding-top: 15px;
+}
+
+#instructions h3 {
+    margin-bottom: 10px;
+    font-size: 16px;
+    color: #fff;
+}
+
+#instructions p {
+    margin-bottom: 5px;
+    font-size: 12px;
+    color: #ccc;
+}
+
+#scene-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    #info {
+        max-width: 250px;
+        padding: 15px;
+    }
+    
+    #info h1 {
+        font-size: 20px;
+    }
+    
+    .control-group label {
+        font-size: 12px;
+    }
+    
+    #instructions p {
+        font-size: 11px;
+    }
+}
