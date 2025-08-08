@@ -3,65 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3D Aircraft Simulator Pro - Mobile Style</title>
+    <title>Fast 3D Aircraft Simulator - 9 Second Load</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Preload critical resources -->
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" as="script">
+    <link rel="preload" href="script.js" as="script">
+    <link rel="preload" href="styles.css" as="style">
 </head>
 <body>
-    <!-- Loading Screen -->
+    <!-- Fast Loading Screen -->
     <div id="loading-screen">
         <div class="loading-content">
             <div class="loading-logo">
                 <i class="fas fa-plane"></i>
-                <h1>3D Aircraft Simulator Pro</h1>
+                <h1>Fast 3D Aircraft Simulator</h1>
+                <p>Loading in under 9 seconds...</p>
             </div>
             <div class="loading-progress-container">
-                <div class="loading-progress"></div>
+                <div class="loading-progress" id="loading-progress"></div>
             </div>
-            <div class="loading-text">Initializing Systems...</div>
+            <div class="loading-text" id="loading-text">Initializing...</div>
+            <div class="loading-time" id="loading-time">0.0s</div>
         </div>
     </div>
 
-    <!-- Aircraft Selection Screen -->
+    <!-- Quick Aircraft Selection -->
     <div id="aircraft-selection">
         <div class="selection-content">
-            <h1><i class="fas fa-plane"></i> Select Your Aircraft</h1>
+            <h1><i class="fas fa-plane"></i> Select Aircraft</h1>
             <div class="aircraft-grid">
                 <div class="aircraft-card selected" data-aircraft="cessna">
                     <div class="aircraft-icon">✈️</div>
                     <h3>Cessna 172</h3>
-                    <p>Single-engine trainer</p>
-                    <div class="aircraft-specs">
-                        <span>Max Speed: 126 knots</span>
-                        <span>Altitude: 14,000 ft</span>
-                    </div>
+                    <p>Trainer aircraft</p>
                 </div>
                 <div class="aircraft-card" data-aircraft="boeing">
                     <div class="aircraft-icon">🛩️</div>
                     <h3>Boeing 737</h3>
-                    <p>Commercial airliner</p>
-                    <div class="aircraft-specs">
-                        <span>Max Speed: 450 knots</span>
-                        <span>Altitude: 41,000 ft</span>
-                    </div>
+                    <p>Commercial jet</p>
                 </div>
                 <div class="aircraft-card" data-aircraft="helicopter">
                     <div class="aircraft-icon">🚁</div>
                     <h3>Bell 206</h3>
                     <p>Utility helicopter</p>
-                    <div class="aircraft-specs">
-                        <span>Max Speed: 140 knots</span>
-                        <span>Altitude: 13,000 ft</span>
-                    </div>
                 </div>
                 <div class="aircraft-card" data-aircraft="fighter">
                     <div class="aircraft-icon">⚡</div>
-                    <h3>F-16 Fighting Falcon</h3>
-                    <p>Military fighter jet</p>
-                    <div class="aircraft-specs">
-                        <span>Max Speed: 1,500 knots</span>
-                        <span>Altitude: 50,000 ft</span>
-                    </div>
+                    <h3>F-16 Fighter</h3>
+                    <p>Military jet</p>
                 </div>
             </div>
             <button id="start-flight" class="start-btn">
@@ -73,24 +63,19 @@
     <!-- 3D Scene Container -->
     <div id="scene-container"></div>
 
-    <!-- Enhanced HUD -->
+    <!-- Simplified HUD -->
     <div id="hud">
         <div class="hud-top">
             <div class="hud-left">
                 <div class="hud-item">
                     <i class="fas fa-tachometer-alt"></i>
                     <span id="speed">0</span>
-                    <small>KNOTS</small>
+                    <small>KTS</small>
                 </div>
                 <div class="hud-item">
                     <i class="fas fa-mountain"></i>
                     <span id="altitude">100</span>
                     <small>FT</small>
-                </div>
-                <div class="hud-item">
-                    <i class="fas fa-compass"></i>
-                    <span id="heading">0</span>
-                    <small>°</small>
                 </div>
             </div>
             <div class="hud-center">
@@ -99,40 +84,24 @@
                     <div class="pitch-indicator">
                         <div class="pitch-ladder"></div>
                     </div>
-                    <div class="roll-indicator">
-                        <div class="roll-marker"></div>
-                    </div>
                 </div>
             </div>
             <div class="hud-right">
                 <div class="hud-item">
-                    <i class="fas fa-thermometer-half"></i>
-                    <span id="airspeed">0</span>
-                    <small>KTS</small>
+                    <i class="fas fa-compass"></i>
+                    <span id="heading">0</span>
+                    <small>°</small>
                 </div>
                 <div class="hud-item">
                     <i class="fas fa-gas-pump"></i>
                     <span id="fuel">100</span>
                     <small>%</small>
                 </div>
-                <div class="hud-item">
-                    <i class="fas fa-clock"></i>
-                    <span id="time">00:00</span>
-                </div>
-            </div>
-        </div>
-        <div class="hud-bottom">
-            <div class="coordinates">
-                <span>LAT: <span id="latitude">0.000</span></span>
-                <span>LON: <span id="longitude">0.000</span></span>
-            </div>
-            <div class="flight-time">
-                <span>Flight Time: <span id="flightTime">00:00:00</span></span>
             </div>
         </div>
     </div>
 
-    <!-- Enhanced Camera Controls -->
+    <!-- Quick Camera Controls -->
     <div id="camera-controls">
         <button id="cockpitView" class="camera-btn active">
             <i class="fas fa-eye"></i> Cockpit
@@ -143,24 +112,12 @@
         <button id="towerView" class="camera-btn">
             <i class="fas fa-building"></i> Tower
         </button>
-        <button id="chaseView" class="camera-btn">
-            <i class="fas fa-running"></i> Chase
-        </button>
-        <button id="doorView" class="camera-btn">
-            <i class="fas fa-door-open"></i> Door
-        </button>
-        <button id="downView" class="camera-btn">
-            <i class="fas fa-arrow-down"></i> Down
-        </button>
-        <button id="frontView" class="camera-btn">
-            <i class="fas fa-arrow-up"></i> Front
-        </button>
     </div>
 
-    <!-- Enhanced Control Panel -->
+    <!-- Fast Control Panel -->
     <div id="control-panel">
         <div class="panel-header">
-            <h3><i class="fas fa-cogs"></i> Flight Controls</h3>
+            <h3><i class="fas fa-cogs"></i> Controls</h3>
             <button id="panel-toggle">
                 <i class="fas fa-chevron-up"></i>
             </button>
@@ -172,21 +129,13 @@
                     <label>Throttle: <span id="throttle">0</span>%</label>
                     <input type="range" id="throttleSlider" min="0" max="100" value="0">
                 </div>
-                <div class="control-group">
-                    <label>Mixture: <span id="mixture">100</span>%</label>
-                    <input type="range" id="mixtureSlider" min="0" max="100" value="100">
-                </div>
-                <div class="control-group">
-                    <label>Propeller: <span id="propeller">100</span>%</label>
-                    <input type="range" id="propellerSlider" min="0" max="100" value="100">
-                </div>
                 <button id="engineToggle" class="control-btn">
                     <i class="fas fa-power-off"></i> START ENGINE
                 </button>
             </div>
-            
+
             <div class="control-section">
-                <h4><i class="fas fa-plane"></i> Flight Controls</h4>
+                <h4><i class="fas fa-plane"></i> Flight</h4>
                 <div class="control-group">
                     <label>Pitch: <span id="pitchControl">0</span>°</label>
                     <input type="range" id="pitchSlider" min="-45" max="45" value="0">
@@ -195,16 +144,8 @@
                     <label>Roll: <span id="rollControl">0</span>°</label>
                     <input type="range" id="rollSlider" min="-45" max="45" value="0">
                 </div>
-                <div class="control-group">
-                    <label>Yaw: <span id="yawControl">0</span>°</label>
-                    <input type="range" id="yawSlider" min="-180" max="180" value="0">
-                </div>
-                <div class="control-group">
-                    <label>Trim: <span id="trimControl">0</span>°</label>
-                    <input type="range" id="trimSlider" min="-10" max="10" value="0">
-                </div>
             </div>
-            
+
             <div class="control-section">
                 <h4><i class="fas fa-cogs"></i> Systems</h4>
                 <div class="system-buttons">
@@ -214,104 +155,20 @@
                     <button id="flapsToggle" class="system-btn">
                         <i class="fas fa-arrow-up"></i> FLAPS UP
                     </button>
-                    <button id="autopilotToggle" class="system-btn">
-                        <i class="fas fa-robot"></i> AUTOPILOT OFF
-                    </button>
-                    <button id="gpsToggle" class="system-btn active">
-                        <i class="fas fa-satellite"></i> GPS ON
-                    </button>
-                    <button id="stallToggle" class="system-btn">
-                        <i class="fas fa-exclamation-triangle"></i> STALL WARNING
-                    </button>
-                </div>
-            </div>
-            
-            <div class="control-section">
-                <h4><i class="fas fa-cloud"></i> Environment</h4>
-                <div class="control-group">
-                    <label>Weather:</label>
-                    <select id="weatherSelect">
-                        <option value="clear">Clear</option>
-                        <option value="cloudy">Cloudy</option>
-                        <option value="stormy">Stormy</option>
-                        <option value="foggy">Foggy</option>
-                    </select>
-                </div>
-                <div class="control-group">
-                    <label>Time of Day:</label>
-                    <select id="timeSelect">
-                        <option value="day">Day</option>
-                        <option value="night">Night</option>
-                        <option value="dawn">Dawn</option>
-                        <option value="dusk">Dusk</option>
-                    </select>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Enhanced Flight Instruments Panel -->
-    <div id="instruments-panel">
-        <div class="instruments-header">
-            <h3><i class="fas fa-tachometer-alt"></i> Flight Instruments</h3>
-        </div>
-        <div class="instruments-content">
-            <div class="instrument-group">
-                <div class="instrument">
-                    <h4>RPM</h4>
-                    <div class="gauge">
-                        <div class="gauge-value" id="rpmValue">0</div>
-                        <div class="gauge-bar">
-                            <div class="gauge-fill" id="rpmFill"></div>
-                        </div>
-                        <div class="gauge-label">x1000</div>
-                    </div>
-                </div>
-                <div class="instrument">
-                    <h4>Oil Pressure</h4>
-                    <div class="gauge">
-                        <div class="gauge-value" id="oilPressureValue">0</div>
-                        <div class="gauge-bar">
-                            <div class="gauge-fill" id="oilPressureFill"></div>
-                        </div>
-                        <div class="gauge-label">PSI</div>
-                    </div>
-                </div>
-            </div>
-            <div class="instrument-group">
-                <div class="instrument">
-                    <h4>Vertical Speed</h4>
-                    <div class="gauge">
-                        <div class="gauge-value" id="verticalSpeedValue">0</div>
-                        <div class="gauge-bar">
-                            <div class="gauge-fill" id="verticalSpeedFill"></div>
-                        </div>
-                        <div class="gauge-label">FT/MIN</div>
-                    </div>
-                </div>
-                <div class="instrument">
-                    <h4>Turn Coordinator</h4>
-                    <div class="turn-indicator">
-                        <div class="turn-ball" id="turnBall"></div>
-                        <div class="turn-rate" id="turnRate"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Enhanced Mini Map -->
+    <!-- Quick Mini Map -->
     <div id="mini-map">
         <div class="map-header">
-            <h3><i class="fas fa-map"></i> Navigation Map</h3>
+            <h3><i class="fas fa-map"></i> Map</h3>
         </div>
-        <canvas id="mapCanvas" width="200" height="200"></canvas>
-        <div class="map-info">
-            <span>Aircraft Type: <span id="aircraft-type">Cessna 172</span></span>
-        </div>
+        <canvas id="mapCanvas" width="150" height="150"></canvas>
     </div>
 
-    <!-- Enhanced Status Bar -->
+    <!-- Status Bar -->
     <div id="status-bar">
         <div class="status-left">
             <span><i class="fas fa-wifi"></i> Connected</span>
@@ -325,7 +182,7 @@
         </div>
     </div>
 
-    <!-- Mobile Touch Controls -->
+    <!-- Mobile Controls -->
     <div id="mobile-controls">
         <div class="mobile-joystick" id="joystick">
             <div class="joystick-base">
@@ -338,50 +195,6 @@
             </button>
             <button id="mobile-throttle-down" class="mobile-btn">
                 <i class="fas fa-arrow-down"></i>
-            </button>
-            <button id="mobile-gear" class="mobile-btn">
-                <i class="fas fa-arrow-down"></i>
-            </button>
-            <button id="mobile-flaps" class="mobile-btn">
-                <i class="fas fa-arrow-up"></i>
-            </button>
-        </div>
-    </div>
-
-    <!-- Instructions Overlay -->
-    <div id="instructions-overlay">
-        <div class="instructions-content">
-            <h2><i class="fas fa-info-circle"></i> Flight Instructions</h2>
-            <div class="instructions-grid">
-                <div class="instruction-item">
-                    <h4><i class="fas fa-keyboard"></i> Keyboard Controls</h4>
-                    <ul>
-                        <li><strong>W/S:</strong> Pitch up/down</li>
-                        <li><strong>A/D:</strong> Roll left/right</li>
-                        <li><strong>Q/Z:</strong> Yaw left/right</li>
-                        <li><strong>Space:</strong> Toggle autopilot</li>
-                        <li><strong>R:</strong> Reset position</li>
-                    </ul>
-                </div>
-                <div class="instruction-item">
-                    <h4><i class="fas fa-mouse"></i> Mouse Controls</h4>
-                    <ul>
-                        <li><strong>Click & Drag:</strong> Camera control</li>
-                        <li><strong>Scroll:</strong> Zoom in/out</li>
-                        <li><strong>Double Click:</strong> Reset camera</li>
-                    </ul>
-                </div>
-                <div class="instruction-item">
-                    <h4><i class="fas fa-touch"></i> Touch Controls</h4>
-                    <ul>
-                        <li><strong>Joystick:</strong> Flight control</li>
-                        <li><strong>Buttons:</strong> Throttle, gear, flaps</li>
-                        <li><strong>Swipe:</strong> Camera movement</li>
-                    </ul>
-                </div>
-            </div>
-            <button id="close-instructions" class="close-btn">
-                <i class="fas fa-times"></i> Close
             </button>
         </div>
     </div>
