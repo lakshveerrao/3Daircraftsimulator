@@ -492,6 +492,68 @@ body {
     align-items: center;
     justify-content: center;
     font-size: 1.2rem;
+    transition: all 0.3s ease;
+}
+
+.mobile-btn:hover {
+    background: rgba(76, 175, 80, 0.8);
+    transform: scale(1.1);
+}
+
+.mobile-camera-controls {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.mobile-camera-btn {
+    width: 45px;
+    height: 45px;
+    background: rgba(0, 0, 0, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.mobile-camera-btn:hover, .mobile-camera-btn.active {
+    background: rgba(33, 150, 243, 0.8);
+    transform: scale(1.1);
+}
+
+.mobile-special-controls {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.mobile-special-btn {
+    width: 45px;
+    height: 45px;
+    background: rgba(0, 0, 0, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.mobile-special-btn:hover {
+    background: rgba(255, 152, 0, 0.8);
+    transform: scale(1.1);
+}
+
+.mobile-special-btn.active {
+    background: rgba(76, 175, 80, 0.8);
 }
 
 /* Help Button */
@@ -512,6 +574,159 @@ body {
     font-size: 1.2rem;
     z-index: 200;
     backdrop-filter: blur(10px);
+}
+
+/* FlightGear-style ATC Panel */
+.atc-panel {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 400px;
+    max-height: 500px;
+    background: rgba(0, 0, 0, 0.9);
+    border: 2px solid rgba(0, 255, 0, 0.5);
+    border-radius: 10px;
+    color: white;
+    z-index: 2000;
+    display: none;
+    backdrop-filter: blur(10px);
+}
+
+.atc-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    background: rgba(0, 255, 0, 0.2);
+    border-bottom: 1px solid rgba(0, 255, 0, 0.3);
+    border-radius: 8px 8px 0 0;
+}
+
+.atc-header h3 {
+    margin: 0;
+    color: #00ff00;
+    font-size: 1.1rem;
+}
+
+.atc-header button {
+    background: none;
+    border: none;
+    color: #00ff00;
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+
+.atc-header button:hover {
+    background: rgba(0, 255, 0, 0.2);
+}
+
+.atc-content {
+    padding: 20px;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.atc-info p {
+    margin: 8px 0;
+    font-size: 0.9rem;
+}
+
+.atc-info strong {
+    color: #00ff00;
+}
+
+.atc-clearance, .atc-instructions {
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.atc-clearance h4, .atc-instructions h4 {
+    color: #00ff00;
+    margin-bottom: 10px;
+    font-size: 1rem;
+}
+
+#atc-clearance-text {
+    background: rgba(0, 255, 0, 0.1);
+    padding: 10px;
+    border-radius: 5px;
+    border-left: 3px solid #00ff00;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+#atc-instructions-list {
+    max-height: 150px;
+    overflow-y: auto;
+}
+
+#atc-instructions-list div {
+    background: rgba(255, 255, 255, 0.1);
+    margin: 5px 0;
+    padding: 8px;
+    border-radius: 3px;
+    font-size: 0.8rem;
+    border-left: 2px solid #00ff00;
+}
+
+/* FlightGear-style enhanced HUD */
+.hud-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 10px;
+    background: rgba(0, 0, 0, 0.6);
+    border-radius: 5px;
+    margin: 2px 0;
+    font-size: 0.85rem;
+    border-left: 3px solid rgba(0, 255, 0, 0.5);
+}
+
+.hud-item i {
+    color: #00ff00;
+    width: 16px;
+    text-align: center;
+}
+
+.hud-item span {
+    color: white;
+    font-weight: 500;
+}
+
+.hud-item small {
+    color: #00ff00;
+    font-size: 0.7rem;
+    opacity: 0.8;
+}
+
+/* FlightGear-style control buttons */
+.control-btn {
+    background: linear-gradient(135deg, rgba(0, 255, 0, 0.2), rgba(0, 200, 0, 0.1));
+    border: 1px solid rgba(0, 255, 0, 0.3);
+    color: #00ff00;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    margin: 5px;
+}
+
+.control-btn:hover {
+    background: linear-gradient(135deg, rgba(0, 255, 0, 0.3), rgba(0, 200, 0, 0.2));
+    border-color: rgba(0, 255, 0, 0.5);
+    transform: translateY(-1px);
+}
+
+.control-btn.active {
+    background: linear-gradient(135deg, rgba(0, 255, 0, 0.4), rgba(0, 200, 0, 0.3));
+    border-color: #00ff00;
+    box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
 }
 
 /* Responsive Design */
@@ -547,6 +762,81 @@ body {
     
     #mobile-controls {
         display: block;
+    }
+
+    /* Mobile-specific enhancements */
+    #hud {
+        padding: 10px;
+    }
+
+    .hud-item {
+        font-size: 0.9rem;
+    }
+
+    #mini-map {
+        width: 150px;
+        height: 150px;
+    }
+
+    #mapCanvas {
+        width: 150px;
+        height: 150px;
+    }
+
+    #status-bar {
+        padding: 8px 15px;
+        font-size: 0.8rem;
+    }
+
+    /* Mobile controls positioning */
+    #mobile-controls {
+        bottom: 20px;
+        right: 20px;
+        left: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .mobile-joystick {
+        width: 120px;
+        height: 120px;
+    }
+
+    .joystick-handle {
+        width: 50px;
+        height: 50px;
+    }
+
+    .mobile-buttons {
+        gap: 15px;
+    }
+
+    .mobile-btn {
+        width: 60px;
+        height: 60px;
+        font-size: 1.4rem;
+    }
+
+    .mobile-camera-controls {
+        gap: 15px;
+    }
+
+    .mobile-camera-btn {
+        width: 55px;
+        height: 55px;
+        font-size: 1.2rem;
+    }
+
+    .mobile-special-controls {
+        gap: 15px;
+    }
+
+    .mobile-special-btn {
+        width: 55px;
+        height: 55px;
+        font-size: 1.2rem;
     }
 }
 
