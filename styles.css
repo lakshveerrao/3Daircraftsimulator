@@ -5,10 +5,11 @@
 }
 
 body {
-    font-family: 'Arial', sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
     color: white;
     overflow: hidden;
+    user-select: none;
 }
 
 #container {
@@ -17,27 +18,454 @@ body {
     height: 100vh;
 }
 
-#info {
+/* Aircraft Selection Screen */
+#aircraft-selection {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.5s ease-out;
+}
+
+.selection-content {
+    text-align: center;
+    max-width: 1200px;
+    padding: 40px;
+}
+
+.selection-content h1 {
+    font-size: 3rem;
+    margin-bottom: 40px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    color: white;
+}
+
+.aircraft-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+    margin-bottom: 40px;
+}
+
+.aircraft-card {
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 15px;
+    padding: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+
+.aircraft-card:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: #4CAF50;
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+.aircraft-card.selected {
+    background: rgba(76, 175, 80, 0.3);
+    border-color: #4CAF50;
+    box-shadow: 0 0 20px rgba(76, 175, 80, 0.5);
+}
+
+.aircraft-card img {
+    width: 100px;
+    height: 100px;
+    margin-bottom: 15px;
+    border-radius: 10px;
+}
+
+.aircraft-card h3 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+    color: white;
+}
+
+.aircraft-card p {
+    color: #ccc;
+    margin-bottom: 15px;
+}
+
+.specs {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.specs span {
+    font-size: 0.9rem;
+    color: #ddd;
+    background: rgba(0, 0, 0, 0.3);
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+
+.start-btn {
+    background: linear-gradient(45deg, #4CAF50, #45a049);
+    border: none;
+    color: white;
+    padding: 15px 40px;
+    font-size: 1.2rem;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+.start-btn:hover {
+    background: linear-gradient(45deg, #45a049, #4CAF50);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+}
+
+/* Loading Screen */
+#loading-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.5s ease-out;
+}
+
+.loading-content {
+    text-align: center;
+}
+
+.loading-logo {
+    margin-bottom: 30px;
+}
+
+.loading-logo i {
+    font-size: 4rem;
+    color: #4CAF50;
+    margin-bottom: 20px;
+}
+
+.loading-logo h1 {
+    font-size: 2.5rem;
+    color: white;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+}
+
+.loading-bar {
+    width: 400px;
+    height: 8px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 4px;
+    margin: 20px auto;
+    overflow: hidden;
+}
+
+.loading-progress {
+    height: 100%;
+    background: linear-gradient(90deg, #4CAF50, #45a049);
+    width: 0%;
+    transition: width 0.3s ease;
+    border-radius: 4px;
+}
+
+.loading-text {
+    color: #ccc;
+    font-size: 1.1rem;
+}
+
+/* HUD */
+#hud {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 100;
+}
+
+.hud-top, .hud-bottom {
+    position: absolute;
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    padding: 20px;
+}
+
+.hud-top {
+    top: 0;
+}
+
+.hud-bottom {
+    bottom: 0;
+}
+
+.hud-item {
+    background: rgba(0, 0, 0, 0.7);
+    padding: 10px 15px;
+    border-radius: 8px;
+    text-align: center;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    min-width: 80px;
+}
+
+.hud-item i {
+    display: block;
+    font-size: 1.2rem;
+    margin-bottom: 5px;
+    color: #4CAF50;
+}
+
+.hud-item span {
+    display: block;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: white;
+}
+
+.hud-item small {
+    font-size: 0.8rem;
+    color: #ccc;
+}
+
+.hud-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.artificial-horizon {
+    width: 200px;
+    height: 200px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    position: relative;
+    background: linear-gradient(180deg, #87CEEB 0%, #228B22 100%);
+    overflow: hidden;
+}
+
+.horizon-line {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: rgba(255, 255, 255, 0.8);
+    transform: translateY(-50%);
+}
+
+.pitch-indicator {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 4px;
+    height: 20px;
+    background: #ff4444;
+    transform: translate(-50%, -50%);
+    border-radius: 2px;
+}
+
+.roll-indicator {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 60px;
+    height: 2px;
+    background: #ff4444;
+    transform: translate(-50%, -50%);
+}
+
+.attitude-indicator {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100px;
+    height: 100px;
+    transform: translate(-50%, -50%);
+}
+
+.attitude-line {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.6);
+    transform: translateY(-50%);
+}
+
+.attitude-marker {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 4px;
+    height: 4px;
+    background: #ff4444;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* Flight Instruments Panel */
+#instruments-panel {
     position: absolute;
     top: 20px;
     left: 20px;
-    z-index: 100;
-    background: rgba(0, 0, 0, 0.7);
-    padding: 20px;
+    background: rgba(0, 0, 0, 0.8);
     border-radius: 10px;
-    backdrop-filter: blur(10px);
+    padding: 20px;
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    z-index: 200;
     max-width: 300px;
 }
 
-#info h1 {
+.instrument-group {
     margin-bottom: 20px;
-    font-size: 24px;
-    text-align: center;
-    color: #fff;
 }
 
-#controls {
-    margin-bottom: 20px;
+.instrument-group h3 {
+    font-size: 1rem;
+    color: #4CAF50;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.instrument {
+    margin-bottom: 15px;
+}
+
+.instrument label {
+    display: block;
+    font-size: 0.9rem;
+    color: #ddd;
+    margin-bottom: 5px;
+}
+
+.gauge {
+    position: relative;
+    width: 100%;
+    height: 30px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.gauge-value {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 0.8rem;
+    color: white;
+    z-index: 2;
+}
+
+.gauge-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #4CAF50, #45a049);
+    width: 0%;
+    transition: width 0.3s ease;
+    border-radius: 5px;
+}
+
+.turn-indicator {
+    width: 60px;
+    height: 30px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    position: relative;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.turn-ball {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 8px;
+    height: 8px;
+    background: #ff4444;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: all 0.3s ease;
+}
+
+/* Control Panel */
+#control-panel {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 350px;
+    background: rgba(0, 0, 0, 0.8);
+    border-radius: 10px;
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    z-index: 200;
+    transition: transform 0.3s ease;
+}
+
+#control-panel.collapsed {
+    transform: translateX(calc(100% - 50px));
+}
+
+.panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.panel-header h2 {
+    font-size: 1.2rem;
+    color: white;
+}
+
+.panel-toggle {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 5px;
+    transition: background 0.3s;
+}
+
+.panel-toggle:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.panel-content {
+    padding: 20px;
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+.control-section {
+    margin-bottom: 25px;
+}
+
+.control-section h3 {
+    font-size: 1rem;
+    color: #4CAF50;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .control-group {
@@ -46,8 +474,8 @@ body {
 
 .control-group label {
     display: block;
-    margin-bottom: 5px;
-    font-size: 14px;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
     color: #ddd;
 }
 
@@ -58,6 +486,7 @@ body {
     background: #444;
     outline: none;
     -webkit-appearance: none;
+    cursor: pointer;
 }
 
 .control-group input[type="range"]::-webkit-slider-thumb {
@@ -66,41 +495,154 @@ body {
     width: 18px;
     height: 18px;
     border-radius: 50%;
-    background: #667eea;
+    background: #4CAF50;
     cursor: pointer;
     transition: background 0.3s;
 }
 
 .control-group input[type="range"]::-webkit-slider-thumb:hover {
-    background: #764ba2;
+    background: #45a049;
 }
 
-.control-group input[type="range"]::-moz-range-thumb {
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    background: #667eea;
+.toggle-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    padding: 8px 15px;
+    border-radius: 5px;
     cursor: pointer;
-    border: none;
+    transition: all 0.3s;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 5px;
 }
 
-#instructions {
-    border-top: 1px solid rgba(255, 255, 255, 0.2);
-    padding-top: 15px;
+.toggle-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
 }
 
-#instructions h3 {
+.toggle-btn.active {
+    background: #4CAF50;
+    border-color: #45a049;
+}
+
+select {
+    width: 100%;
+    padding: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+select option {
+    background: #333;
+    color: white;
+}
+
+/* Camera Controls */
+#camera-controls {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    display: flex;
+    gap: 10px;
+    z-index: 200;
+}
+
+.camera-btn {
+    background: rgba(0, 0, 0, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    padding: 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+    backdrop-filter: blur(10px);
+}
+
+.camera-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.camera-btn.active {
+    background: #4CAF50;
+    border-color: #45a049;
+}
+
+/* Mini Map */
+#mini-map {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background: rgba(0, 0, 0, 0.8);
+    border-radius: 10px;
+    padding: 15px;
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    z-index: 200;
+}
+
+.map-header h3 {
+    font-size: 1rem;
+    color: #4CAF50;
     margin-bottom: 10px;
-    font-size: 16px;
-    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
-#instructions p {
-    margin-bottom: 5px;
-    font-size: 12px;
+#mapCanvas {
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 5px;
+    background: #1a1a1a;
+}
+
+.map-info {
+    margin-top: 10px;
+    font-size: 0.8rem;
     color: #ccc;
 }
 
+.map-info div {
+    margin-bottom: 2px;
+}
+
+/* Status Bar */
+#status-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    backdrop-filter: blur(10px);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    z-index: 200;
+}
+
+.status-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
+    color: #ccc;
+}
+
+.status-item i {
+    font-size: 0.8rem;
+}
+
+#connectionStatus {
+    color: #4CAF50;
+}
+
+/* Scene Container */
 #scene-container {
     position: absolute;
     top: 0;
@@ -109,22 +651,116 @@ body {
     height: 100%;
 }
 
-/* Responsive design */
+/* Responsive Design */
+@media (max-width: 1200px) {
+    #control-panel {
+        width: 300px;
+    }
+    
+    .hud-item {
+        min-width: 70px;
+        padding: 8px 12px;
+    }
+    
+    .hud-item span {
+        font-size: 1.3rem;
+    }
+    
+    .aircraft-grid {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+    }
+}
+
 @media (max-width: 768px) {
-    #info {
-        max-width: 250px;
-        padding: 15px;
+    #control-panel {
+        width: 280px;
+        right: 10px;
+        top: 10px;
     }
     
-    #info h1 {
-        font-size: 20px;
+    #mini-map {
+        left: 10px;
+        top: 10px;
     }
     
-    .control-group label {
-        font-size: 12px;
+    #camera-controls {
+        bottom: 10px;
+        right: 10px;
     }
     
-    #instructions p {
-        font-size: 11px;
+    .hud-top, .hud-bottom {
+        padding: 10px;
     }
+    
+    .hud-item {
+        min-width: 60px;
+        padding: 6px 10px;
+    }
+    
+    .hud-item span {
+        font-size: 1.1rem;
+    }
+    
+    .artificial-horizon {
+        width: 150px;
+        height: 150px;
+    }
+    
+    .aircraft-grid {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 15px;
+    }
+    
+    .selection-content h1 {
+        font-size: 2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    #control-panel {
+        width: 250px;
+    }
+    
+    .hud-item {
+        min-width: 50px;
+        padding: 5px 8px;
+    }
+    
+    .hud-item span {
+        font-size: 1rem;
+    }
+    
+    .artificial-horizon {
+        width: 120px;
+        height: 120px;
+    }
+    
+    .camera-btn {
+        padding: 10px;
+    }
+    
+    .aircraft-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+}
+
+/* Scrollbar Styling */
+.panel-content::-webkit-scrollbar {
+    width: 6px;
+}
+
+.panel-content::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+}
+
+.panel-content::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 3px;
+}
+
+.panel-content::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.5);
 }
