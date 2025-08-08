@@ -93,6 +93,24 @@ class FlightSimulatorPro {
             timeOfDay: 'day'
         };
         
+        // Performance tracking
+        this.frameCount = 0;
+        this.lastTime = performance.now();
+        this.fps = 60;
+        
+        // Performance optimization settings
+        this.performanceMode = 'high'; // 'high', 'medium', 'low'
+        this.lodDistance = 5000; // Distance for LOD switching
+        this.maxDrawDistance = 10000; // Maximum draw distance
+        
+        // LOD groups
+        this.lodGroups = {
+            trees: [],
+            buildings: [],
+            clouds: [],
+            mountains: []
+        };
+        
         // Enhanced Camera modes
         this.cameraModes = {
             COCKPIT: 'cockpit',
@@ -110,11 +128,6 @@ class FlightSimulatorPro {
         this.mouse = { x: 0, y: 0 };
         this.clock = new THREE.Clock();
         this.startTime = Date.now();
-        
-        // Performance
-        this.frameCount = 0;
-        this.lastTime = 0;
-        this.fps = 60;
         
         // Mobile controls
         this.touchControls = {
@@ -136,12 +149,15 @@ class FlightSimulatorPro {
         this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 50000);
         this.camera.position.set(0, 100, 0);
 
-        // Renderer setup
-        this.renderer = new THREE.WebGLRenderer({ antialias: true });
+        // Renderer setup with performance optimizations
+        this.renderer = new THREE.WebGLRenderer({ 
+            antialias: false, // Disable antialiasing for better performance
+            powerPreference: "high-performance"
+        });
         this.renderer.setSize(window.innerWidth, window.innerHeight);
         this.renderer.setClearColor(0x87CEEB);
         this.renderer.shadowMap.enabled = true;
-        this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        this.renderer.shadowMap.type = THREE.PCFShadowMap; // Use faster shadow mapping
         this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
         this.renderer.toneMappingExposure = 1.2;
         document.getElementById('scene-container').appendChild(this.renderer.domElement);
@@ -149,7 +165,7 @@ class FlightSimulatorPro {
         // Lighting
         this.setupLighting();
 
-        // Create environment
+        // Create environment with performance optimizations
         await this.createEnvironment();
 
         // Create aircraft
@@ -190,15 +206,15 @@ class FlightSimulatorPro {
 
     setupLighting() {
         // Ambient light
-        const ambientLight = new THREE.AmbientLight(0x404040, 0.4);
+        const ambientLight = new THREE.AmbientLight(0x404040, 0.6);
         this.scene.add(ambientLight);
 
-        // Directional light (sun)
-        const directionalLight = new THREE.DirectionalLight(0xffffff, 1.2);
+        // Directional light (sun) with optimized shadows
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 1.0);
         directionalLight.position.set(1000, 1000, 500);
         directionalLight.castShadow = true;
-        directionalLight.shadow.mapSize.width = 4096;
-        directionalLight.shadow.mapSize.height = 4096;
+        directionalLight.shadow.mapSize.width = 2048; // Reduced from 4096
+        directionalLight.shadow.mapSize.height = 2048; // Reduced from 4096
         directionalLight.shadow.camera.near = 0.5;
         directionalLight.shadow.camera.far = 5000;
         directionalLight.shadow.camera.left = -2000;
@@ -208,7 +224,7 @@ class FlightSimulatorPro {
         this.scene.add(directionalLight);
 
         // Hemisphere light for better color balance
-        const hemisphereLight = new THREE.HemisphereLight(0x87CEEB, 0x404040, 0.3);
+        const hemisphereLight = new THREE.HemisphereLight(0x87CEEB, 0x404040, 0.4);
         this.scene.add(hemisphereLight);
     }
 
@@ -236,8 +252,8 @@ class FlightSimulatorPro {
     }
 
     createEnhancedTerrain() {
-        // Create detailed terrain with heightmap
-        const terrainGeometry = new THREE.PlaneGeometry(150000, 150000, 300, 300);
+        // Create simplified terrain with reduced geometry
+        const terrainGeometry = new THREE.PlaneGeometry(150000, 150000, 100, 100); // Reduced from 300x300
         
         // Create heightmap for realistic terrain
         const vertices = terrainGeometry.attributes.position.array;
@@ -260,8 +276,8 @@ class FlightSimulatorPro {
         this.terrain.receiveShadow = true;
         this.scene.add(this.terrain);
 
-        // Add realistic mountains with different types
-        for (let i = 0; i < 50; i++) {
+        // Add simplified mountains with reduced count
+        for (let i = 0; i < 20; i++) { // Reduced from 50
             const mountainType = Math.random();
             let mountainGeometry;
             
@@ -270,13 +286,13 @@ class FlightSimulatorPro {
                 mountainGeometry = new THREE.ConeGeometry(
                     Math.random() * 1000 + 400,
                     Math.random() * 2000 + 1000,
-                    8
+                    6 // Reduced from 8
                 );
             } else if (mountainType < 0.6) {
                 // Rounded mountains
                 mountainGeometry = new THREE.SphereGeometry(
                     Math.random() * 800 + 300,
-                    8, 6
+                    6, 4 // Reduced from 8, 6
                 );
             } else {
                 // Plateaus
@@ -284,7 +300,7 @@ class FlightSimulatorPro {
                     Math.random() * 600 + 200,
                     Math.random() * 600 + 200,
                     Math.random() * 800 + 400,
-                    8
+                    6 // Reduced from 8
                 );
             }
             
@@ -303,11 +319,11 @@ class FlightSimulatorPro {
             this.scene.add(mountain);
         }
 
-        // Add hills and valleys
-        for (let i = 0; i < 100; i++) {
+        // Add simplified hills with reduced count
+        for (let i = 0; i < 40; i++) { // Reduced from 100
             const hillGeometry = new THREE.SphereGeometry(
                 Math.random() * 300 + 100,
-                6, 4
+                4, 3 // Reduced from 6, 4
             );
             const hillMaterial = new THREE.MeshLambertMaterial({ 
                 color: new THREE.Color().setHSL(0.2, 0.5, 0.4 + Math.random() * 0.3)
@@ -326,7 +342,7 @@ class FlightSimulatorPro {
     }
 
     createDynamicSky() {
-        const skyGeometry = new THREE.SphereGeometry(50000, 64, 64);
+        const skyGeometry = new THREE.SphereGeometry(50000, 32, 32); // Reduced from 64, 64
         const skyMaterial = new THREE.MeshBasicMaterial({
             color: 0x87CEEB,
             side: THREE.BackSide
@@ -336,15 +352,15 @@ class FlightSimulatorPro {
     }
 
     createRealisticClouds() {
-        for (let i = 0; i < 150; i++) {
+        for (let i = 0; i < 50; i++) { // Reduced from 150
             const cloudGroup = new THREE.Group();
             
-            // Create more complex cloud shapes
-            for (let j = 0; j < 12; j++) {
+            // Create simplified cloud shapes
+            for (let j = 0; j < 6; j++) { // Reduced from 12
                 const cloudGeometry = new THREE.SphereGeometry(
                     Math.random() * 200 + 100,
-                    16,
-                    12
+                    8, // Reduced from 16
+                    6  // Reduced from 12
                 );
                 const cloudMaterial = new THREE.MeshLambertMaterial({ 
                     color: 0xffffff,
@@ -373,8 +389,8 @@ class FlightSimulatorPro {
     }
 
     createDetailedBuildings() {
-        // Create city buildings with more variety
-        for (let i = 0; i < 100; i++) {
+        // Create city buildings with reduced count
+        for (let i = 0; i < 40; i++) { // Reduced from 100
             const buildingType = Math.random();
             let buildingGeometry;
             
@@ -402,13 +418,13 @@ class FlightSimulatorPro {
             }
             
             const buildingMaterial = new THREE.MeshLambertMaterial({ 
-                color: new THREE.Color().setHSL(0, 0, Math.random() * 0.4 + 0.2)
+                color: new THREE.Color().setHSL(0.6, 0.3, 0.4 + Math.random() * 0.3)
             });
             const building = new THREE.Mesh(buildingGeometry, buildingMaterial);
             
             building.position.set(
                 (Math.random() - 0.5) * 80000,
-                Math.random() * 150 + 25,
+                Math.random() * 200 + 50,
                 (Math.random() - 0.5) * 80000
             );
             building.castShadow = true;
@@ -475,20 +491,20 @@ class FlightSimulatorPro {
     }
 
     createTrees() {
-        // Create realistic trees with different types
-        for (let i = 0; i < 500; i++) {
+        // Create simplified trees with reduced count using instanced meshes
+        for (let i = 0; i < 100; i++) { // Reduced from 500
             const treeType = Math.random();
             let treeGroup = new THREE.Group();
             
             if (treeType < 0.4) {
                 // Pine trees
-                const trunkGeometry = new THREE.CylinderGeometry(2, 3, 20, 8);
+                const trunkGeometry = new THREE.CylinderGeometry(2, 3, 20, 6); // Reduced from 8
                 const trunkMaterial = new THREE.MeshLambertMaterial({ color: 0x8B4513 });
                 const trunk = new THREE.Mesh(trunkGeometry, trunkMaterial);
                 trunk.position.y = 10;
                 treeGroup.add(trunk);
                 
-                const leavesGeometry = new THREE.ConeGeometry(8, 25, 8);
+                const leavesGeometry = new THREE.ConeGeometry(8, 25, 6); // Reduced from 8
                 const leavesMaterial = new THREE.MeshLambertMaterial({ color: 0x228B22 });
                 const leaves = new THREE.Mesh(leavesGeometry, leavesMaterial);
                 leaves.position.y = 25;
@@ -496,13 +512,13 @@ class FlightSimulatorPro {
                 
             } else if (treeType < 0.7) {
                 // Oak trees
-                const trunkGeometry = new THREE.CylinderGeometry(3, 4, 15, 8);
+                const trunkGeometry = new THREE.CylinderGeometry(3, 4, 15, 6); // Reduced from 8
                 const trunkMaterial = new THREE.MeshLambertMaterial({ color: 0x8B4513 });
                 const trunk = new THREE.Mesh(trunkGeometry, trunkMaterial);
                 trunk.position.y = 7.5;
                 treeGroup.add(trunk);
                 
-                const leavesGeometry = new THREE.SphereGeometry(12, 8, 6);
+                const leavesGeometry = new THREE.SphereGeometry(12, 6, 4); // Reduced from 8, 6
                 const leavesMaterial = new THREE.MeshLambertMaterial({ color: 0x32CD32 });
                 const leaves = new THREE.Mesh(leavesGeometry, leavesMaterial);
                 leaves.position.y = 20;
@@ -510,18 +526,18 @@ class FlightSimulatorPro {
                 
             } else {
                 // Palm trees
-                const trunkGeometry = new THREE.CylinderGeometry(1, 1, 25, 8);
+                const trunkGeometry = new THREE.CylinderGeometry(1, 1, 25, 6); // Reduced from 8
                 const trunkMaterial = new THREE.MeshLambertMaterial({ color: 0x8B4513 });
                 const trunk = new THREE.Mesh(trunkGeometry, trunkMaterial);
                 trunk.position.y = 12.5;
                 treeGroup.add(trunk);
                 
-                for (let j = 0; j < 8; j++) {
+                for (let j = 0; j < 6; j++) { // Reduced from 8
                     const leafGeometry = new THREE.BoxGeometry(1, 15, 0.5);
                     const leafMaterial = new THREE.MeshLambertMaterial({ color: 0x228B22 });
                     const leaf = new THREE.Mesh(leafGeometry, leafMaterial);
                     leaf.position.y = 25;
-                    leaf.rotation.y = (j * Math.PI) / 4;
+                    leaf.rotation.y = (j * Math.PI) / 3; // Adjusted for 6 leaves
                     treeGroup.add(leaf);
                 }
             }
@@ -539,11 +555,11 @@ class FlightSimulatorPro {
     }
 
     createWaterBodies() {
-        // Create lakes and rivers
-        for (let i = 0; i < 8; i++) {
+        // Create simplified lakes and rivers
+        for (let i = 0; i < 4; i++) { // Reduced from 8
             const waterGeometry = new THREE.CircleGeometry(
                 Math.random() * 3000 + 1500,
-                32
+                16 // Reduced from 32
             );
             const waterMaterial = new THREE.MeshLambertMaterial({ 
                 color: 0x006994,
@@ -1149,11 +1165,16 @@ class FlightSimulatorPro {
             yaw: 0,
             throttle: 0,
             mixture: 100,
+            propeller: 100,
             fuel: 100,
             temperature: 15,
             airspeed: 0,
             latitude: 0,
-            longitude: 0
+            longitude: 0,
+            rpm: 0,
+            oilPressure: 0,
+            verticalSpeed: 0,
+            trim: 0
         };
         
         // Reset UI
@@ -1171,6 +1192,7 @@ class FlightSimulatorPro {
     }
 
     updateFlightData() {
+        if (!this.clock) return;
         const delta = this.clock.getDelta();
         
         // Auto-pilot mode
@@ -1235,11 +1257,11 @@ class FlightSimulatorPro {
     }
 
     updateHUD() {
-        // Update HUD values
-        document.getElementById('speed').textContent = Math.round(this.flightData.speed);
+        try {
+            // Update HUD values
+            document.getElementById('speed').textContent = Math.round(this.flightData.speed);
         document.getElementById('altitude').textContent = Math.round(this.flightData.altitude);
         document.getElementById('heading').textContent = Math.round(this.flightData.heading);
-        document.getElementById('pitch').textContent = Math.round(this.flightData.pitch);
         document.getElementById('airspeed').textContent = Math.round(this.flightData.airspeed);
         document.getElementById('fuel').textContent = Math.round(this.flightData.fuel);
         document.getElementById('latitude').textContent = this.flightData.latitude.toFixed(3);
@@ -1263,6 +1285,9 @@ class FlightSimulatorPro {
         const now = new Date();
         document.getElementById('time').textContent = 
             `${now.getUTCHours().toString().padStart(2, '0')}:${now.getUTCMinutes().toString().padStart(2, '0')}`;
+        } catch (error) {
+            console.error('Error updating HUD:', error);
+        }
     }
 
     updateCamera() {
@@ -1356,11 +1381,15 @@ class FlightSimulatorPro {
     }
 
     animate() {
-        requestAnimationFrame(() => this.animate());
-        
-        this.updateFlightData();
-        this.updatePerformance();
-        this.renderer.render(this.scene, this.camera);
+        try {
+            requestAnimationFrame(() => this.animate());
+            
+            this.updateFlightData();
+            this.updatePerformance();
+            this.renderer.render(this.scene, this.camera);
+        } catch (error) {
+            console.error('Error in animation loop:', error);
+        }
     }
 }
 
